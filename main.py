@@ -7,6 +7,7 @@
 """
 #import os library to be able to list the files within a directory
 import os
+import sys
 def askForDirectory():
 	directory = input("Specify the directory path(current directory is '.'): ")
 	filesInDirectory = os.listdir(directory)
@@ -14,8 +15,24 @@ def askForDirectory():
 		print "File(s) in the directory: "
 		for fileName in filesInDirectory:
 		    print fileName
+		    if fileName[0] is not '.':
+		    	openFile(fileName)
 	else:
 		print "You listed a wrong directory path"
 	
-
+def openFile(fileName):
+	try:
+		fileObject = open(fileName, 'r')
+		lines = fileObject.readlines()
+		for line in lines:
+			print line
+	except IOError as e:
+		print "I/O error({0}): {1}".format(e.errno, e.strerror)
+	except ValueError:
+		print "Could not convert data to an integer."
+	except:
+		print "Unexpected error:", sys.exc_info()[0]
+		raise
+	finally:
+		fileObject.close()
 askForDirectory()
