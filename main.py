@@ -9,33 +9,34 @@
 import os, sys, string, re
 from collections import Counter
 def askForDirectory():
-	directory = input("Specify the directory path(current directory is '.'): ")
-	filesInDirectory = os.listdir(directory)
+	path = input("Specify the directory path(current directory is '.'): ")
+	filesInDirectory = os.listdir(path)
 	if filesInDirectory is not None:
 		print "File(s) in the directory: "
 		for fileName in filesInDirectory:
 		    print fileName
 		    if fileName[0] is not '.':
-		    	openFile(fileName)
+		    	openFile(fileName, path)
 	else:
 		print "You listed a wrong directory path"
 
-def openFile(fileName):
+def openFile(fileName, path):
 	try:
-		fileObject = open(fileName, 'r').read()
-		# Find words
-		#words = fileObject.split()
-		words = re.findall(r"[\w]+", fileObject)
-		wordCollection = Counter(words);
-		print "===========Word details of {} file===========".format(fileName)
-		for word, repetitions in sorted(wordCollection.items(), key=lambda x:x[1]):
-			print word, "mentioned:", repetitions
-		# Filter all characters that are not printable.
-		text = filter(lambda x: x in string.printable, fileObject)
-		characterCollection = Counter(text)
-		print "===========Character details of {} file===========".format(fileName)
-		for character, repetitions in sorted(characterCollection.items(), key=lambda x:x[1]):
-			print character, 'mentioned:', repetitions
+		if os.path.isfile(os.path.join(path, fileName)):
+			fileObject = open(os.path.join(path, fileName), 'r')
+			fileText = fileObject.read()
+			# Find words
+			words = re.findall(r"[\w]+", fileText)
+			wordCollection = Counter(words);
+			print "===========Word details of {} file===========".format(fileName)
+			for word, repetitions in sorted(wordCollection.items(), key=lambda x:x[1]):
+				print word, "mentioned:", repetitions
+			# Filter all characters that are not printable.
+			text = filter(lambda x: x in string.printable, fileText)
+			characterCollection = Counter(text)
+			print "===========Character details of {} file===========".format(fileName)
+			for character, repetitions in sorted(characterCollection.items(), key=lambda x:x[1]):
+				print character, 'mentioned:', repetitions
 	except IOError as e:
 		print "I/O error({0}): {1}".format(e.errno, e.strerror)
 	except ValueError:
