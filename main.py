@@ -8,9 +8,11 @@
 # Imports
 import os, sys, string, re
 from collections import Counter
-# The main program logic. Asks for a path and calls the functions to handle man logic
+#Global variable
+counter = 0
+# The main program logic. Asks for a path and calls the function to handle main logic
 def mainLogic():
-	path = input("Specify the directory path(current directory is '.'): ")
+	path = input("Specify the directory path (current directory is '.'): ")
 	filesInDirectory = os.listdir(path)
 	if filesInDirectory is not None:
 		print "File(s) in the directory: "
@@ -20,30 +22,48 @@ def mainLogic():
 		    	parseFile(fileName, path)
 	else:
 		print "You listed a wrong directory path"
-# Function to read file contents
+# Read file contents and call outputResults function to push the results to file
 def parseFile(fileName, path):
 	try:
 		if os.path.isfile(os.path.join(path, fileName)):
 			fileObject = open(os.path.join(path, fileName), 'r')
 			fileText = fileObject.read()
 			# Find words
-			words = re.findall(r"[\w]+", fileText)
+			words = re.findall(r"[\w]{2,}", fileText)
 			wordCollection = Counter(words);
-			print "===========Word details of {} file===========".format(fileName)
+			outputContent = "===========Word details of {} file===========\n".format(fileName)
 			for word, repetitions in sorted(wordCollection.items(), key=lambda x:x[1]):
-				print word, "mentioned:", repetitions
-			# Filter all characters that are not printable.
+				outputContent += word + " mentioned: " + str(repetitions) + "\n"
+			outputResults(outputContent)
+			# Find printable characters
 			text = filter(lambda x: x in string.printable, fileText)
 			characterCollection = Counter(text)
-			print "===========Character details of {} file===========".format(fileName)
+			outputContent = "===========Character details of {} file===========\n".format(fileName)
 			for character, repetitions in sorted(characterCollection.items(), key=lambda x:x[1]):
-				print character, 'mentioned:', repetitions
+				outputContent += character + " mentioned: " + str(repetitions) + "\n"
+			outputResults(outputContent)
 	except IOError as e:
 		print "I/O error({0}): {1}".format(e.errno, e.strerror)
-	except ValueError:
-		print "Could not convert data to an integer."
 	except:
 		print "Unexpected error:", sys.exc_info()[0]
 		raise
+# Output the provided contents into results file. Overwrite if its the first run
+def outputResults(content):
+	global counter
+	if counter == 0:
+		openType = "w"
+	else:
+		openType = "a"
+	try:
+		outputFile = open("results.txt", openType)
+		outputFile.write(content + "\n")
+	except IOError as e:
+		print "I/O error({0}): {1}".format(e.errno, e.strerror)
+	except:
+		print "Unexpected error:", sys.exc_info()[0]
+		raise
+	finally:
+		outputFile.close()
+		counter += 1
 
-askForDirectory()
+mainLogic()
