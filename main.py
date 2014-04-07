@@ -8,6 +8,7 @@
 #import os library to be able to list the files within a directory
 import os
 import sys
+from collections import Counter
 def askForDirectory():
 	directory = input("Specify the directory path(current directory is '.'): ")
 	filesInDirectory = os.listdir(directory)
@@ -25,7 +26,11 @@ def openFile(fileName):
 		fileObject = open(fileName, 'r')
 		lines = fileObject.readlines()
 		for line in lines:
-			print line
+			# Filter all characters that are not letters.
+			textContent = filter(lambda x: x in string.letters, text.lower())
+			c = Counter(textContent)
+			for letter, repetitions in c.iteritems():
+				print letter, repetitions
 	except IOError as e:
 		print "I/O error({0}): {1}".format(e.errno, e.strerror)
 	except ValueError:
