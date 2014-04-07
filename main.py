@@ -5,10 +5,11 @@
 	a) žodžiai b) simboliai. Antra, į tą patį failą išvesti tą pąčią statistiką apskaičiuotą
 	kiekvienam failui atskirai.
 """
-#import os library to be able to list the files within a directory
+# Imports
 import os, sys, string, re
 from collections import Counter
-def askForDirectory():
+# The main program logic. Asks for a path and calls the functions to handle man logic
+def mainLogic():
 	path = input("Specify the directory path(current directory is '.'): ")
 	filesInDirectory = os.listdir(path)
 	if filesInDirectory is not None:
@@ -16,11 +17,11 @@ def askForDirectory():
 		for fileName in filesInDirectory:
 		    print fileName
 		    if fileName[0] is not '.':
-		    	openFile(fileName, path)
+		    	parseFile(fileName, path)
 	else:
 		print "You listed a wrong directory path"
-
-def openFile(fileName, path):
+# Function to read file contents
+def parseFile(fileName, path):
 	try:
 		if os.path.isfile(os.path.join(path, fileName)):
 			fileObject = open(os.path.join(path, fileName), 'r')
