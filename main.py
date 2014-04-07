@@ -17,9 +17,11 @@ def mainLogic():
 	path = input("Specify the directory path (current directory is '.'): ")
 	filesInDirectory = os.listdir(path)
 	if filesInDirectory is not None:
-		print "File(s) in the directory: "
+		print "File(s) and folder(s) in the directory (only files will be used): "
 		for fileName in filesInDirectory:
+			# Prints all files and folders
 		    print fileName
+		    # If fileName does not point to a folder - parse file
 		    if fileName[0] is not '.':
 		    	parseFile(fileName, path)
 	else:
@@ -29,10 +31,11 @@ def parseFile(fileName, path):
 	global allWords
 	global allCharacters
 	try:
+		# If it is a file - read contents
 		if os.path.isfile(os.path.join(path, fileName)):
 			fileObject = open(os.path.join(path, fileName), 'r')
 			fileText = fileObject.read()
-			# Find words
+			# Find words (at least two characters after one another)
 			words = re.findall(r"[\w]{2,}", fileText)
 			wordCollection = Counter(words);
 			if allWords is not None:
@@ -59,6 +62,8 @@ def parseFile(fileName, path):
 	except:
 		print "Unexpected error:", sys.exc_info()[0]
 		raise
+	finally:
+		fileObject.close()
 # Output the provided contents into results file. Overwrite if its the first run
 def outputResults(content):
 	global counter
@@ -77,6 +82,7 @@ def outputResults(content):
 	finally:
 		outputFile.close()
 		counter += 1
+# Outputs the total results of words and characters into the results file
 def outputTotalResults():
 	global allWords
 	global allCharacters
@@ -97,6 +103,7 @@ def outputTotalResults():
 		raise
 	finally:
 		outputFile.close()
+# Main function - runs the program
 def main():
 	mainLogic()
 	outputTotalResults()
