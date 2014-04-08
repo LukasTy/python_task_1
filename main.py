@@ -37,9 +37,9 @@ def mainLogic():
 def parseFile(fileName, path):
     global allWords
     global allCharacters
-    try:
-        # If it is a file - read contents
-        if os.path.isfile(os.path.join(path, fileName)):
+    # If it is a file - read contents
+    if os.path.isfile(os.path.join(path, fileName)):
+        try:
             fileObject = open(os.path.join(path, fileName), 'r')
             fileText = fileObject.read()
             # Find words (at least two characters after one another)
@@ -72,13 +72,13 @@ def parseFile(fileName, path):
                 outputContent += character + " mentioned: " + \
                     str(repetitions) + "\n"
             outputResults(outputContent)
-    except IOError as e:
-        print "I/O error({0}): {1}".format(e.errno, e.strerror)
-    except:
-        print "Unexpected error:", sys.exc_info()[0]
-        raise
-    finally:
-        fileObject.close()
+        except IOError as e:
+            print "I/O error({0}): {1}".format(e.errno, e.strerror)
+        except:
+            print "Unexpected error:", sys.exc_info()[0]
+            raise
+        finally:
+            fileObject.close()
 
 
 # Output the provided contents into results file.
